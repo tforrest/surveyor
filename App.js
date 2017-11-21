@@ -6,10 +6,13 @@ import { Constants, Location, Permissions } from 'expo';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      currentGPSLocation: null,
+      pastGPSLocations: []
+    };
   };
 
-  componentWillMount() {
+  componentDidMount() {
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
@@ -25,32 +28,46 @@ export default class App extends React.Component {
       this.setState({
         errorMessage: 'Permission to access location was denied',
       });
+    } else{
+      let currentGPSLocation = await Location.getCurrentPositionAsync({});
+      let parsedGPSLocation = {
+        latitude: currentGPSLocation.coords.latitude,
+        longitude: currentGPSLocation.coords.longitude,
+      }
+      pastGPSLocations = this.state.pastGPSLocations + currentGPSLocation;
+      this.setState({
+        currentGPSLocation: parsedGPSLocation,
+        pastGPSLocations: pastGPSLocations,
+      });
     }
-
-    let currentGPSLocation = await Location.getCurrentPositionAsync({
-      enableHighAccuracy: true,
-    });
-    pastGPSLocations = this.state.pastGPSLocations + currentGPSLocation;
-    this.setState({ currentGPSLocation: currentGPSLocation,
-      pastGPSLocations: pastGPSLocations,
-    });
   };
 
+  _postToServerAsync = async() => {
+    console.log("POST to server")
+  };
   render() {
-    let text = "Loading Latitude and Longitude..."
+    let text = "Loading Latitude and Longitude...";
+    let postDisabled = true;
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
-    } else if (this.state.location) {
-      text = JSON.stringify(this.state.currentGPSLocation);
+    } else if (this.state.currentGPSLocation) {
+      text = "Latitude: " + this.state.currentGPSLocation.latitude + "\nLongitude: " + this.state.currentGPSLocation.longitude
+      postDisabled = false;
     }
     return (
       <View style={styles.container}>
-        <Button 
+        <Text>{text}</Text>
+        <Button
           onPress={this._getLocationAsync}
-          title="Pull Current Latitude and Longitude"
+          title="Pull Current Location"
           color="#841584"
         />
-        <Text>{text}</Text>
+        <Button
+          onPress={this._postToServerAsync}
+          title="Post Grid to Server"
+          disabled={postDisabled}
+          color="#008000"
+        />
       </View>
     );
   }
