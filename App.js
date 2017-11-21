@@ -47,7 +47,7 @@ export default class App extends React.Component {
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
     } else if (this.state.location) {
-      text = "Latitude: " + this.state.location.latitude + "\nLongitude: " + this.state.location.longitude
+      text = "Latitude: " + this.state.location.latitude + "\nLongitude: " + this.state.location.longitude;
       postDisabled = false;
     }
     return (
