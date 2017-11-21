@@ -7,8 +7,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentGPSLocation: null,
-      pastGPSLocations: []
+      location: null,
     };
   };
 
@@ -29,15 +28,12 @@ export default class App extends React.Component {
         errorMessage: 'Permission to access location was denied',
       });
     } else{
-      let currentGPSLocation = await Location.getCurrentPositionAsync({});
-      let parsedGPSLocation = {
-        latitude: currentGPSLocation.coords.latitude,
-        longitude: currentGPSLocation.coords.longitude,
-      }
-      pastGPSLocations = this.state.pastGPSLocations + currentGPSLocation;
+      let rawLocation = await Location.getCurrentPositionAsync({});
       this.setState({
-        currentGPSLocation: parsedGPSLocation,
-        pastGPSLocations: pastGPSLocations,
+        location:  {
+          latitude: rawLocation.coords.latitude,
+          longitude: rawLocation.coords.longitude,
+        },
       });
     }
   };
@@ -50,8 +46,8 @@ export default class App extends React.Component {
     let postDisabled = true;
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
-    } else if (this.state.currentGPSLocation) {
-      text = "Latitude: " + this.state.currentGPSLocation.latitude + "\nLongitude: " + this.state.currentGPSLocation.longitude
+    } else if (this.state.location) {
+      text = "Latitude: " + this.state.location.latitude + "\nLongitude: " + this.state.location.longitude
       postDisabled = false;
     }
     return (
