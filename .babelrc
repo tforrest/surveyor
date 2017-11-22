@@ -1,9 +1,19 @@
 {
-  "presets": ["babel-preset-expo"],
-  "env": {
-    "development": {
-      "extends": "airbnb",
-      "plugins": ["transform-react-jsx-source", "react", "jsx-ally", "import"]
-    }
-  }
+  "presets": [
+    "babel-preset-react-native-stage-0/decorator-support",
+    "babel-preset-expo"
+  ],
+  "plugins": [
+    [
+      "transform-react-jsx-source",
+      "react",
+      "jsx-ally",
+      "import",
+      "module-resolver",
+      {
+        "cwd": "babelrc",
+        "root": "." // note, this is the directory for my app, for you this may be something different
+      }
+    ]
+  ]
 }
