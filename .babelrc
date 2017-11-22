@@ -12,7 +12,7 @@
       "module-resolver",
       {
         "cwd": "babelrc",
-        "root": "." // note, this is the directory for my app, for you this may be something different
+        "root": "."
       }
     ]
   ]

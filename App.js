@@ -1,9 +1,9 @@
 import React from "react";
 import { Platform, StyleSheet, Text, View, Button } from "react-native";
 import { Constants, Location, Permissions } from "expo";
-import { Config } from "react-native-config";
+import { API_URL } from "./settings";
 
-export default class App extends React.Component {
+export default class MainView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,8 +41,8 @@ export default class App extends React.Component {
 
   _postToServerAsync = async () => {
     let data = this._getCurrentGrid();
-    console.log(Config.API_URL);
-    fetch(Config.API_URL, {
+    console.log(API_URL);
+    fetch(API_URL, {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
