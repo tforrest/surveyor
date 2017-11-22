@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform, StyleSheet, Text, View, Button } from "react-native";
 import { Constants, Location, Permissions } from "expo";
+import { Config } from "react-native-config";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -11,7 +12,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    if (Platform.OS === "android" && !Constants.isDevice) {
+    if (Platform.OS === "android" && !Constants.iscleDevice) {
       this.setState({
         errorMessage:
           "Oops, this will not work on Sketch in an Android emulator. Try it on your device!"
@@ -39,8 +40,36 @@ export default class App extends React.Component {
   };
 
   _postToServerAsync = async () => {
-    console.log("POST to server");
+    let data = this._getCurrentGrid();
+    console.log(Config.API_URL);
+    fetch(Config.API_URL, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(
+      function(response) {
+        if (response.status !== 200) {
+          console.log("POST Success");
+        } else {
+          console.log("POST failed " + response.statusText);
+        }
+      },
+      function(error) {
+        console.log("Request failed");
+        console.log(error.message);
+      }
+    );
   };
+
+  _getCurrentGrid() {
+    return {
+      centerLatitude: this.state.location.latitude,
+      centerLongitude: this.state.location.longitude
+    };
+  }
+
   render() {
     let text = "Loading Latitude and Longitude...";
     let postDisabled = true;
